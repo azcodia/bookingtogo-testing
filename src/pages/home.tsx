@@ -16,7 +16,6 @@ export const Home = () => {
 
   const {
     loading,
-    error,
     categories,
     selectedCategory,
     setSelectedCategory,
@@ -57,6 +56,7 @@ export const Home = () => {
           <Banner />
         </Suspense>
 
+        {/* Filter & Search */}
         <div className="max-w-7xl mx-auto sm:px-6 flex justify-end items-center gap-4 py-4">
           <select
             value={selectedCategory}
@@ -79,11 +79,8 @@ export const Home = () => {
           />
         </div>
 
+        {/* Products Grid */}
         <main className="max-w-7xl mx-auto sm:px-6 py-10">
-          {error && (
-            <div className="text-red-500 text-center mb-4">{error}</div>
-          )}
-
           <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {loading
               ? Array.from({ length: 8 }).map((_, i) => (
@@ -94,13 +91,11 @@ export const Home = () => {
                 ))}
           </div>
 
-          {!loading && currentProducts.length > 0 && (
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={setCurrentPage}
-            />
-          )}
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
         </main>
       </div>
     </PageMeta>
