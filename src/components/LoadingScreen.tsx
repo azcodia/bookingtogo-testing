@@ -6,7 +6,6 @@ export const LoadingScreen = ({
   message = "Loading products...",
 }: LoadingScreenProps) => (
   <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-800">
-    {/* GIF atau ilustrasi */}
     <img
       src="https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif"
       alt="Loading..."
