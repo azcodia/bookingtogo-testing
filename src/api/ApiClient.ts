@@ -2,7 +2,6 @@ import api from "./api";
 
 class ApiClient {
   async get<T>(endpoint: string, params?: Record<string, unknown>): Promise<T> {
-    // Type assertion supaya TS tahu interceptor return T
     return (await api.get(endpoint, { params })) as T;
   }
 
