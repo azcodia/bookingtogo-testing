@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import type { Product } from "../interface/Product.interface";
 import { ProductService } from "../api/services/product.services";
 
 export const useProducts = (itemsPerPage = 8) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const [categories, setCategories] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
@@ -12,26 +13,28 @@ export const useProducts = (itemsPerPage = 8) => {
 
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Fetch products & categories
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [prods, cats] = await Promise.all([
-          ProductService.getProducts(),
-          ProductService.getCategories(),
-        ]);
-        setProducts(prods);
-        setCategories(cats);
-      } catch (error) {
-        console.error("Gagal fetch products atau categories:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const [prods, cats] = await Promise.all([
+        ProductService.getProducts(),
+        ProductService.getCategories(),
+      ]);
+      setProducts(prods);
+      setCategories(cats);
+    } catch (err) {
+      console.error("Gagal fetch products atau categories:", err);
+      setError("Failed to load products. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  // Filter & search
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
   const filteredProducts = useMemo(() => {
     let filtered = products;
     if (selectedCategory !== "all") {
@@ -45,7 +48,6 @@ export const useProducts = (itemsPerPage = 8) => {
     return filtered;
   }, [products, selectedCategory, searchQuery]);
 
-  // Pagination
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentProducts = filteredProducts.slice(
@@ -58,6 +60,7 @@ export const useProducts = (itemsPerPage = 8) => {
     filteredProducts,
     currentProducts,
     loading,
+    error,
     categories,
     selectedCategory,
     setSelectedCategory,
@@ -66,5 +69,6 @@ export const useProducts = (itemsPerPage = 8) => {
     currentPage,
     setCurrentPage,
     totalPages,
+    retry: fetchData,
   };
 };
