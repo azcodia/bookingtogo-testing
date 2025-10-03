@@ -16,6 +16,7 @@ export const Home = () => {
 
   const {
     loading,
+    error,
     categories,
     selectedCategory,
     setSelectedCategory,
@@ -79,6 +80,10 @@ export const Home = () => {
         </div>
 
         <main className="max-w-7xl mx-auto sm:px-6 py-10">
+          {error && (
+            <div className="text-red-500 text-center mb-4">{error}</div>
+          )}
+
           <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {loading
               ? Array.from({ length: 8 }).map((_, i) => (
@@ -89,11 +94,13 @@ export const Home = () => {
                 ))}
           </div>
 
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={setCurrentPage}
-          />
+          {!loading && currentProducts.length > 0 && (
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
+          )}
         </main>
       </div>
     </PageMeta>
